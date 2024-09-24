@@ -1,0 +1,121 @@
+import React, {useEffect, useState} from 'react';
+
+import {
+    Grid,
+    Button,
+    CircularProgress,
+    Typography
+  } from "@material-ui/core";
+import MUIDataTable from "mui-datatables";
+
+import { useHistory } from "react-router";
+
+import PageTitle from "../../components/PageTitle";
+import AddServiceDialog from '../../components/Dialogs/AddServiceDialog';
+import EditServiceDialog from '../../components/Dialogs/EditServiceDialog';
+import EditCustomerDialog from '../../components/Dialogs/EditCustomerDialog';
+
+function Services() {
+
+  const [servicesData, setServicesData] = useState([]);
+  const [showModalService, setShowModalService] = useState(false);
+  const [showModalEditService, setShowModalEditService] = useState(false);
+  const [service_id, setService_id] = useState("");
+  const history = useHistory();
+
+  const getServices = () => {
+    fetch(process.env.REACT_APP_API+'services/?format=json', { headers : { 
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+       }
+    }) 
+    .then(response=>response.json())
+    .then(data=>{
+        setServicesData(data);
+    })
+  }
+
+  const deleteService = (service_id) => {
+    fetch(process.env.REACT_APP_API+'services/'+ service_id +'?format=json', { method: 'DELETE' })
+  }
+
+  useEffect(() => {
+    getServices();
+  }, [showModalService])
+
+  const handleModalService = () => {
+    setShowModalService(!showModalService);
+  }
+  const handleModalEditService = () => {
+    setShowModalEditService(!showModalEditService);
+  }
+
+    return (
+        <>
+        <AddServiceDialog active={showModalService} setActive={handleModalService}/>
+        <EditServiceDialog active={showModalEditService} setActive={handleModalEditService} service_id={service_id}/>
+        <PageTitle title="Сервисные компании" button={<Button
+            variant="contained"
+            size="medium"
+            color="secondary"
+            style={{outline: "none"}}
+            onClick={handleModalService}
+            >
+                Добавить сервисную компанию
+            </Button>} />
+            <Grid container spacing={4}>
+        <Grid item xs={12}>
+          <MUIDataTable
+            title={<Typography variant="h6">
+            Список сервисных компаний
+            {servicesData.length === 0 && <CircularProgress size={24} style={{ marginLeft: 15, position: 'relative', top: 4 }} />}
+          </Typography>}
+            data={servicesData.map(item => [item.name])}
+            columns={["Название",
+            {
+              name: "",
+              options: {
+                filter: true,
+                empty: true,
+                customBodyRender: (value, tableMeta, updateValue) => {
+                  return (
+                    <Button 
+                    variant="contained"
+                    size="medium"
+                    color="success"
+                    style={{outline: "none"}}
+                    onClick={() => {
+                      setService_id(servicesData[tableMeta.rowIndex].id);
+                      handleModalEditService();
+                    }}>
+                      Изменить название
+                    </Button>
+                  );
+                }
+              }
+            }]}
+            options={{
+              filterType: "checkbox",
+              sort: false,
+              selectableRows: "single",
+              setRowProps: value => ({ style: { cursor: 'pointer' } }),
+              onRowClick: (rowData, rowMeta) => {
+                history.push({
+                  pathname:  `/app/services/${servicesData[rowMeta.dataIndex].id}`,
+               });
+              },
+              onRowsDelete: (rowMeta) => {
+                if (window.confirm('Вы точно хотите удалить '+ servicesData[rowMeta.data[0].dataIndex].name +' из списка сервисных компаний?'))
+                  deleteService(servicesData[rowMeta.data[0].dataIndex].id);
+                else
+                  getServices();
+              },
+            }}
+          />
+        </Grid>
+        </Grid>
+        </>
+    )
+}
+
+export default Services;

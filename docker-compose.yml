@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  frontend:
+    build: Front/
+    container_name: react_CheckList
+    command: npm start
+    restart: always
+    ports:
+      - 3000:3000
+    volumes:     
+      - /node_modules:/fronend/node_modules
+    depends_on:
+      - backend    
+  backend:
+    build: Back/
+    container_name: django_CheckList
+    command: python /backend/check_list/src/manage.py runserver 0.0.0.0:5555
+    restart: always
+    volumes:
+      - CL_files:/backend/check_list/src/files_root
+    ports:
+      - "5555:5555"
+      - "5432:5432"
+  
+volumes:
+  CL_files:
+  
+      
+

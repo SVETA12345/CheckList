@@ -1,0 +1,1222 @@
+import React, { useState, useEffect } from "react";
+
+import {
+  Button,
+  IconButton,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogActions,
+  FormControl,
+  MenuItem,
+  Select,
+  Checkbox,
+  ListItemText,
+  Tooltip,
+  OutlinedInput,
+  Grid,
+  Paper, Typography,
+  Card, CardContent, CardActions
+} from "@material-ui/core";
+
+import {
+  ArrowBack as ArrowBackIosIcon,
+  ArrowForward as ArrowForwardIosIcon,
+} from "@material-ui/icons";
+
+import { Form, InputGroup, Row, Col } from "react-bootstrap";
+
+import { MenuProps, petrophysic_names } from "../../pages/checklist/data";
+
+function FillDataDialog({
+  active,
+  setActive,
+  row,
+  secondrow,
+  service_id,
+  onUpdate,
+  onDelete
+}) {
+  const [index, setIndex] = useState(null);
+  const [method, setMethod] = useState("");
+  const [tool_type, setTool_type] = useState("");
+  const [tool_num, setTool_num] = useState("");
+  const [calibr_date, setCalibr_date] = useState(null);
+  const [start_date, setStart_date] = useState(null);
+  const [end_date, setEnd_date] = useState(null);
+  const [interval_shod_start, setInterval_shod_start] = useState(null);
+  const [interval_shod_end, setInterval_shod_end] = useState(null);
+  const [koef_shod, setKoef_shod] = useState(null);
+  const [reason_rashod, setReason_rashod] = useState("");
+  const [koef_fail, setKoef_fail] = useState(null);
+  const [petrophysic_task, setPetrophysic_task] = useState(null);
+  const [petrophysic_selected, setPetrophysic_selected] = useState([]);
+
+  const [methodsData, setMethodsData] = useState([]);
+  const [devicesData, setDevicesData] = useState([]);
+
+const [act, setAct] = useState("");
+const [linkage, setLinkage] = useState("");
+const [emissions, setEmissions] = useState("");
+const [noise, setNoise] = useState("");
+const [control, setControl] = useState("");
+const [distribute_support, setDistribute_support] = useState("");
+const [distribute_palet, setDistribute_palet] = useState("");
+const [dash, setDash] = useState("");
+const [corresponse, setCorresponse] = useState("");
+const [correlation, setCorrelation] = useState(null);
+const [device_tech_condition, setDevice_tech_condition] = useState("");
+const [notes, setNotes] = useState("");
+
+const [showData, setShowData] = useState(false);
+
+  const getMethods = (service_id) => {
+    service_id !== null && methodsData.length === 0 &&
+      fetch(
+        process.env.REACT_APP_API + "methods/" + service_id + "?format=json",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        },
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          setMethodsData(data);
+        });
+  };
+
+  const getDevices = (service_id) => {
+    fetch(
+      process.env.REACT_APP_API +
+        "service_devices/" +
+        service_id +
+        "?format=json",
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      },
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        setDevicesData(data);
+      });
+  };
+
+  useEffect(() => {
+    getMethods(service_id);
+  });
+
+  useEffect(() => {
+    if (row !== undefined && Object.keys(row).length) {
+      setIndex(row.index);
+      setMethod(row.method);
+      setTool_type(row.tool_type);
+      setTool_num(row.tool_num);
+      setCalibr_date(row.calibr_date);
+      setStart_date(row.start_date);
+      setEnd_date(row.end_date);
+      setInterval_shod_start(row.interval_shod_start);
+      setInterval_shod_end(row.interval_shod_end);
+      setKoef_shod(row.koef_shod);
+      setReason_rashod(row.reason_rashod);
+      setKoef_fail(row.koef_fail);
+      setPetrophysic_task(row.petrophysic_task);
+      setPetrophysic_selected(row.petrophysic_selected);
+    } else deleteAllLocalData();
+  }, [row]);
+
+  useEffect(() => {
+    if (secondrow !== undefined && Object.keys(secondrow).length) {
+        setAct(secondrow.act);
+        setLinkage(secondrow.linkage);
+        setEmissions(secondrow.emissions);
+        setNoise(secondrow.noise);
+        setControl(secondrow.control);
+        setDistribute_palet(secondrow.distribute_palet);
+        setDistribute_support(secondrow.distribute_support);
+        setDash(secondrow.dash);
+        setDevice_tech_condition(secondrow.device_tech_condition);
+        setCorresponse(secondrow.corresponse);
+        setCorrelation(secondrow.correlation);
+        setNotes(secondrow.notes);
+    } else deleteAllLocalData();
+  }, [secondrow])
+
+  const deleteAllLocalData = () => {
+    setIndex(null);
+    setMethod("");
+    setTool_type("");
+    setTool_num("");
+    setCalibr_date(null);
+    setStart_date(null);
+    setEnd_date(null);
+    setInterval_shod_start(null);
+    setInterval_shod_end(null);
+    setKoef_shod(null);
+    setReason_rashod("");
+    setKoef_fail(null);
+    setPetrophysic_task(null);
+    setPetrophysic_selected([]);
+    setAct("");
+    setLinkage("");
+    setEmissions("");
+    setNoise("");
+    setControl("");
+    setDistribute_palet("");
+    setDistribute_support("");
+    setDash("");
+    setDevice_tech_condition("");
+    setCorresponse("");
+    setCorrelation(null);
+    setNotes("");
+  };
+
+  const setPetrophysic = (e) => {
+    var petro_koef = 0;
+    var inputValue = e.target.value;
+    typeof inputValue === "string"
+      ? setPetrophysic_selected(inputValue.split(","))
+      : setPetrophysic_selected(inputValue);
+    for (var i = 0; i < petrophysic_selected.length; i++) {
+      if (petrophysic_selected[i] === "Выделение коллекторов")
+        petro_koef += 0.35;
+      if (petrophysic_selected[i] === "Определение характера насыщения")
+        petro_koef += 0.25;
+      if (petrophysic_selected[i] === "Определение Кп") petro_koef += 0.2;
+      if (petrophysic_selected[i] === "Определение Кнг") petro_koef += 0.1;
+      if (petrophysic_selected[i] === "Определение литотипа") petro_koef += 0.1;
+    }
+    setPetrophysic_task(petro_koef.toFixed(2));
+  };
+
+  return (
+    <>
+      <Dialog open={active} onClose={setActive} maxWidth="xl" fullWidth>
+        <DialogTitle>
+          <div style={{ float: "left" }}>Заполнение информации по методу</div>
+          <div style={{ float: "right" }}>
+            <IconButton aria-label="back" onClick={() => setShowData(false)} style={{outline:"none"}}>
+              <ArrowBackIosIcon />
+            </IconButton>
+            <IconButton aria-label="forward" onClick={() => setShowData(true)} style={{outline:"none"}}>
+              <ArrowForwardIosIcon />
+            </IconButton>
+          </div>
+        </DialogTitle>
+        <DialogContent>
+        <Grid container spacing={4}>
+        <Grid item xs={4}>
+        <Card sx={{ minWidth: 275 }} elevation={4} style={{borderRadius:"15px"}}>
+            <CardContent>
+            <Form.Group as={Row}>
+                <Form.Label column sm="6">
+                Тип прибора
+                </Form.Label>
+                <Col sm="6">
+                <Form.Control
+                id="tool_type"
+                name="tool_type"
+                as="select"
+                style={
+                  tool_type === ""
+                    ? { borderColor: "red" }
+                    : { borderColor: "green" }
+                }
+                value={tool_type}
+                onChange={(e) => setTool_type(e.target.value)}
+              >
+                <option hidden selected disabled></option>
+                {devicesData.map(
+                  (item) =>
+                    item.method === method && (
+                      <option key={item.tool_type} value={item.tool_type}>
+                        {item.tool_type}
+                      </option>
+                    ),
+                )}
+              </Form.Control>
+                </Col>
+            </Form.Group>
+            <Form.Group as={Row}>
+                <Form.Label column sm="6">
+                Номер прибора
+                </Form.Label>
+                <Col sm="6">
+                <Form.Control
+                id="tool_num"
+                name="tool_num"
+                style={
+                  tool_num === ""
+                    ? { borderColor: "red" }
+                    : { borderColor: "green" }
+                }
+                value={tool_num}
+                onChange={(e) => setTool_num(e.target.value)}
+                type="number"
+              />
+                </Col>
+            </Form.Group>
+            <Form.Group as={Row}>
+                <Form.Label column sm="6">
+                Дата калибровки прибора
+                </Form.Label>
+                <Col sm="6">
+                <Form.Control
+                id="calibr_date"
+                name="calibr_date"
+                value={calibr_date}
+                onChange={(e) => setCalibr_date(e.target.value)}
+                type="date"
+              />
+                </Col>
+            </Form.Group>
+            <Form.Group as={Row}>
+                <Form.Label column sm="6">
+                Дата начала ГИС при бурении
+                </Form.Label>
+                <Col sm="6">
+                <Form.Control
+                id="start_date"
+                name="start_date"
+                value={start_date}
+                onChange={(e) => setStart_date(e.target.value)}
+                type="date"
+              />
+                </Col>
+            </Form.Group>
+            <Form.Group as={Row}>
+                <Form.Label column sm="6">
+                Дата окончания ГИС при бурении
+                </Form.Label>
+                <Col sm="6">
+                <Form.Control
+                id="end_date"
+                name="end_date"
+                value={end_date}
+                onChange={(e) => setEnd_date(e.target.value)}
+                type="date"
+              />
+                </Col>
+            </Form.Group>
+            <Form.Group as={Row}>
+                <Form.Label column sm="6">
+                Интервал записи (факт), м
+                </Form.Label>
+                <Col sm="6">
+                <Form.Control
+                id="interval_shod_start"
+                name="interval_shod_start"
+                value={interval_shod_start}
+                type="number"
+                step="0.01"
+                style={{ display: "inline-block", width: "123px" }}
+                onChange={(e) =>
+                  e.target.value === ""
+                    ? setInterval_shod_start(null)
+                    : setInterval_shod_start(e.target.value)
+                }
+              />
+              <div style={{ display: "inline-block" }}>&ensp;-&ensp;</div>
+              <Form.Control
+                id="interval_shod_end"
+                name="interval_shod_end"
+                value={interval_shod_end}
+                type="number"
+                step="0.01"
+                style={{ display: "inline-block", width: "123px" }}
+                onChange={(e) =>
+                  e.target.value === ""
+                    ? setInterval_shod_end(null)
+                    : setInterval_shod_end(e.target.value)
+                }
+              />
+                </Col>
+            </Form.Group>
+            <Form.Group as={Row}>
+                <Form.Label column sm="6">
+                Коэффициент сходимости данных
+                </Form.Label>
+                <Col sm="6">
+                <Tooltip
+                title="Значение должно быть в диапазоне от 0 до 100"
+                arrow
+              >
+                <InputGroup>
+                  <Form.Control
+                    id="koef_shod"
+                    name="koef_shod"
+                    value={koef_shod}
+                    type="number"
+                    min="0"
+                    max="100"
+                    onChange={(e) =>
+                      setKoef_shod(
+                        Math.max(
+                          e.target.min,
+                          Math.min(e.target.max, e.target.value),
+                        ),
+                      )
+                    }
+                  />
+                  <InputGroup.Append>
+                    <InputGroup.Text id="basic-addon1">%</InputGroup.Text>
+                  </InputGroup.Append>
+                </InputGroup>
+              </Tooltip>
+                </Col>
+            </Form.Group>
+            <Form.Group as={Row}>
+                <Form.Label column sm="6">
+                Причина расхождения данных
+                </Form.Label>
+                <Col sm="6">
+                <Form.Control
+                id="reason_rashod"
+                name="reason_rashod"
+                as="select"
+                value={reason_rashod}
+                onChange={(e) => setReason_rashod(e.target.value)}
+              >
+                <option></option>
+                <option key="1">
+                  Низкая плотность данных реального времени
+                </option>
+                <option key="2">
+                  Проблема с передачей данных реального времени
+                </option>
+                <option key="3">Перерасчет данных из памяти прибора</option>
+              </Form.Control>
+                </Col>
+            </Form.Group>
+            <Form.Group as={Row}>
+                <Form.Label column sm="6">
+                Коэффициент отсутствия данных
+                </Form.Label>
+                <Col sm="6">
+                <Tooltip
+                title="Значение должно быть в диапазоне от 0 до 100"
+                arrow
+              >
+                <InputGroup>
+                  <Form.Control
+                    id="koef_fail"
+                    name="koef_fail"
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={koef_fail}
+                    onChange={(e) =>
+                      setKoef_fail(
+                        Math.max(
+                          e.target.min,
+                          Math.min(e.target.max, e.target.value),
+                        ),
+                      )
+                    }
+                  />
+                  <InputGroup.Append>
+                    <InputGroup.Text id="basic-addon2">%</InputGroup.Text>
+                  </InputGroup.Append>
+                </InputGroup>
+              </Tooltip>
+                </Col>
+            </Form.Group>
+            <Form.Group as={Row}>
+                <Form.Label column sm="6">
+                Петрофизическая задача
+                </Form.Label>
+                <Col sm="6">
+                <FormControl id="petrophysic_task" name="petrophysic_task">
+                <Select
+                  id="petrophysic_task"
+                  name="petrophysic_task"
+                  multiple
+                  value={petrophysic_selected}
+                  onChange={(e) => setPetrophysic(e)}
+                  input={
+                    <OutlinedInput style={{ width: "266px",height: "38px" }} />
+                  }
+                  renderValue={(selected) => petrophysic_task}
+                  MenuProps={MenuProps}
+                >
+                  {petrophysic_names.map((name) => (
+                    <MenuItem key={name} value={name}>
+                      <Checkbox
+                        checked={petrophysic_selected.indexOf(name) > -1}
+                      />
+                      <ListItemText primary={name} />
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+                </Col>
+            </Form.Group>
+            </CardContent>
+        </Card>
+        </Grid>
+        <Grid item xs={8}>
+        <Card sx={{ minWidth: 275 }} elevation={4} style={{borderRadius:"15px"}}>
+            <CardContent>
+            <Form.Group as={Row}>
+                <Form.Label column sm="8">
+                Акт промера бурового инструмента с указанием длины свечей и
+                порядка их спуска
+                </Form.Label>
+                <Col sm="4">
+                <Form.Control
+                id="act"
+                name="act"
+                as="select"
+                value={act}
+                onChange={(e) => setAct(e.target.value)}
+              >
+                <option value=""></option>
+                <option value="Имеется">Имеется</option>
+                <option value="Не имеется">Не имеется</option>
+              </Form.Control>
+                </Col>
+            </Form.Group>
+            <Form.Group as={Row}>
+                <Form.Label column sm="8">
+                Увязка кривых ГИС по глубине
+                </Form.Label>
+                <Col sm="4">
+                <Form.Control
+                id="linkage"
+                name="linkage"
+                value={linkage}
+                as="select"
+                onChange={(e) => setLinkage(e.target.value)}
+              >
+                <option></option>
+                <option key="1">Увязан</option>
+                <option key="2">Частично неувязан</option>
+                <option key="3">Неувязан</option>
+              </Form.Control>
+                </Col>
+            </Form.Group>
+            <Form.Group as={Row}>
+                <Form.Label column sm="8">
+                Выбросы
+                </Form.Label>
+                <Col sm="4">
+                <Form.Control
+                id="emissions"
+                name="emissions"
+                value={emissions}
+                as="select"
+                onChange={(e) => setEmissions(e.target.value)}
+              >
+                <option></option>
+                <option key="1">Отсутствуют</option>
+                <option key="2">Единичные</option>
+                <option key="3">Регулярные</option>
+              </Form.Control>
+                </Col>
+            </Form.Group>
+            <Form.Group as={Row}>
+                <Form.Label column sm="8">
+                Зашумленность
+                </Form.Label>
+                <Col sm="4">
+                <Form.Control
+                id="noise"
+                name="noise"
+                value={noise}
+                as="select"
+                onChange={(e) => setNoise(e.target.value)}
+              >
+                <option></option>
+                <option key="1">Отсутствует</option>
+                <option key="2">Незначительная</option>
+                <option key="3">Высокая</option>
+              </Form.Control>
+                </Col>
+            </Form.Group>
+            <Form.Group as={Row}>
+                <Form.Label column sm="8">
+                Контрольная запись
+                </Form.Label>
+                <Col sm="4">
+                <Form.Control
+                id="control"
+                name="control"
+                value={control}
+                as="select"
+                onChange={(e) => setControl(e.target.value)}
+              >
+                <option></option>
+                <option key="1">Соответствует основному замеру</option>
+                <option key="2">Отменена по согласованию сторон</option>
+                <option key="3">Не соответствует основной записи</option>
+                <option key="4">Не произведена</option>
+              </Form.Control>
+                </Col>
+            </Form.Group>
+            <Form.Group as={Row}>
+                <Form.Label column sm="8">
+                Распределение данных ГИС при бурении на гистограммах
+                относительно опорных скважин
+                </Form.Label>
+                <Col sm="4">
+                <Form.Control
+                id="distribute_support"
+                name="distribute_support"
+                value={distribute_support}
+                as="select"
+                onChange={(e) => setDistribute_support(e.target.value)}
+              >
+                <option></option>
+                <option key="1">Соответствует данным опорных скважин</option>
+                <option key="2">
+                  Не соответствует данным опорных скважин (занижено)
+                </option>
+                <option key="3">
+                  Не соответствует данным опорных скважин (завышено)
+                </option>
+              </Form.Control>
+                </Col>
+            </Form.Group>
+            <Form.Group as={Row}>
+                <Form.Label column sm="8">
+                Распределение данных ГИС при бурении на кросс-плотах
+                относительно палеток
+                </Form.Label>
+                <Col sm="4">
+                <Form.Control
+                id="distribute_palet"
+                name="distribute_palet"
+                value={distribute_palet}
+                as="select"
+                onChange={(e) => setDistribute_palet(e.target.value)}
+              >
+                <option></option>
+                <option key="1">Лежат в области ожидаемых значений</option>
+                <option key="2">Не лежат в области ожидаемых значений</option>
+              </Form.Control>
+                </Col>
+            </Form.Group>
+            <Form.Group as={Row}>
+                <Form.Label column sm="8">
+                Показания прибора в исследуемом разрезе
+                </Form.Label>
+                <Col sm="4">
+                <Form.Control
+                id="dash"
+                name="dash"
+                as="select"
+                value={dash}
+                onChange={(e) => setDash(e.target.value)}
+              >
+                <option></option>
+                <option key="1">Соответствуют</option>
+                <option key="2">Не соответствуют</option>
+              </Form.Control>
+                </Col>
+            </Form.Group>
+            <Form.Group as={Row}>
+                <Form.Label column sm="8">
+                Соответствие абсолютных петрофизических значений в реперных
+                горизонтах
+                </Form.Label>
+                <Col sm="4">
+                <Form.Control
+                id="corresponse"
+                name="corresponse"
+                as="select"
+                value={corresponse}
+                onChange={(e) => setCorresponse(e.target.value)}
+              >
+                <option></option>
+                <option key="1">Соответствуют</option>
+                <option key="2">Занижены</option>
+                <option key="3">Завышены</option>
+                <option key="4">Реперные горизонты не вскрыты</option>
+                <option key="5">
+                  Свойства реперного горизонта отсутствуют
+                </option>
+                <option key="6">Свойства реперного горизонта расходятся</option>
+              </Form.Control>
+                </Col>
+            </Form.Group>
+            <Form.Group as={Row}>
+                <Form.Label column sm="8">
+                Корреляция с другими методами ГИС при бурении
+                </Form.Label>
+                <Col sm="4">
+                <Tooltip title="Значение должно быть в диапазоне от 0 до 1" arrow>
+                <Form.Control
+                  id="correlation"
+                  name="correlation"
+                  type="number"
+                  min="0"
+                  max="1"
+                  value={correlation}
+                  onChange={(e) => setCorrelation(e.target.value)}
+                />
+              </Tooltip>
+                </Col>
+            </Form.Group>
+            <Form.Group as={Row}>
+                <Form.Label column sm="8">
+                Техническое состояние прибора по кривым и флагам LQC
+                </Form.Label>
+                <Col sm="4">
+                <Form.Control
+                id="device_tech_condition"
+                name="device_tech_condition"
+                as="select"
+                
+                value={device_tech_condition}
+                onChange={(e) => setDevice_tech_condition(e.target.value)}
+              >
+                <option></option>
+                <option key="1">Хорошее</option>
+                <option key="2">Удовлетворительное</option>
+                <option key="3">Неудовлетворительное</option>
+              </Form.Control>
+                </Col>
+            </Form.Group>
+            </CardContent>
+        </Card>
+        </Grid>
+        <Grid item xs={12}>
+        <Card sx={{ minWidth: 275 }} elevation={4} style={{borderRadius:"15px"}}>
+            <CardContent>
+            <Form.Control
+                id="notes"
+                name="notes"
+                type="text"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Введите примечания..."
+              />
+            </CardContent>
+        </Card>
+        </Grid>
+        </Grid>
+          <Form style={{display: (showData ? 'none' : 'block')}}>
+            <Form.Group>
+              <Form.Label htmlFor="method">Метод</Form.Label>
+              <Form.Control
+                id="method"
+                name="method"
+                as="select"
+                style={
+                  method === ""
+                    ? { borderColor: "red" }
+                    : { borderColor: "green" }
+                }
+                value={method}
+                onChange={(e) => {
+                  setMethod(e.target.value);
+                  getDevices(service_id);
+                }}
+              >
+                <option hidden selected disabled></option>
+                {methodsData.map((item) => (
+                  <option key={item.name} value={item.name}>
+                    {item.name}
+                  </option>
+                ))}
+              </Form.Control>
+            </Form.Group>
+            {/*<Form.Group>
+              <Form.Label htmlFor="tool_type">Тип прибора</Form.Label>
+              <Form.Control
+                id="tool_type"
+                name="tool_type"
+                as="select"
+                style={
+                  tool_type === ""
+                    ? { borderColor: "red" }
+                    : { borderColor: "green" }
+                }
+                value={tool_type}
+                onChange={(e) => setTool_type(e.target.value)}
+              >
+                <option hidden selected disabled></option>
+                {devicesData.map(
+                  (item) =>
+                    item.method === method && (
+                      <option key={item.tool_type} value={item.tool_type}>
+                        {item.tool_type}
+                      </option>
+                    ),
+                )}
+              </Form.Control>
+            </Form.Group>
+            <Form.Group>
+              <Form.Label htmlFor="tool_num">Номер прибора</Form.Label>
+              <Form.Control
+                id="tool_num"
+                name="tool_num"
+                style={
+                  tool_num === ""
+                    ? { borderColor: "red" }
+                    : { borderColor: "green" }
+                }
+                value={tool_num}
+                onChange={(e) => setTool_num(e.target.value)}
+                type="number"
+              />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label htmlFor="calibr_date">
+                Дата калибровки прибора
+              </Form.Label>
+              <Form.Control
+                id="calibr_date"
+                name="calibr_date"
+                value={calibr_date}
+                onChange={(e) => setCalibr_date(e.target.value)}
+                type="date"
+              />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label htmlFor="start_date">
+                Дата начала ГИС при бурении
+              </Form.Label>
+              <Form.Control
+                id="start_date"
+                name="start_date"
+                value={start_date}
+                onChange={(e) => setStart_date(e.target.value)}
+                type="date"
+              />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label htmlFor="end_date">
+                Дата окончания ГИС при бурении
+              </Form.Label>
+              <Form.Control
+                id="end_date"
+                name="end_date"
+                value={end_date}
+                onChange={(e) => setEnd_date(e.target.value)}
+                type="date"
+              />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label htmlFor="interval_shod_start">
+                Интервал записи (факт), м
+              </Form.Label>
+              <br />
+              <Form.Control
+                id="interval_shod_start"
+                name="interval_shod_start"
+                value={interval_shod_start}
+                type="number"
+                step="0.01"
+                style={{ display: "inline-block", width: "266px" }}
+                onChange={(e) =>
+                  e.target.value === ""
+                    ? setInterval_shod_start(null)
+                    : setInterval_shod_start(e.target.value)
+                }
+              />
+              <div style={{ display: "inline-block" }}>&ensp;-&ensp;</div>
+              <Form.Control
+                id="interval_shod_end"
+                name="interval_shod_end"
+                value={interval_shod_end}
+                type="number"
+                step="0.01"
+                style={{ display: "inline-block", width: "266px" }}
+                onChange={(e) =>
+                  e.target.value === ""
+                    ? setInterval_shod_end(null)
+                    : setInterval_shod_end(e.target.value)
+                }
+              />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label htmlFor="koef_shod">
+                Коэффициент сходимости данных
+              </Form.Label>
+              <Tooltip
+                title="Значение должно быть в диапазоне от 0 до 100"
+                arrow
+              >
+                <InputGroup>
+                  <Form.Control
+                    id="koef_shod"
+                    name="koef_shod"
+                    value={koef_shod}
+                    type="number"
+                    min="0"
+                    max="100"
+                    onChange={(e) =>
+                      setKoef_shod(
+                        Math.max(
+                          e.target.min,
+                          Math.min(e.target.max, e.target.value),
+                        ),
+                      )
+                    }
+                  />
+                  <InputGroup.Append>
+                    <InputGroup.Text id="basic-addon1">%</InputGroup.Text>
+                  </InputGroup.Append>
+                </InputGroup>
+              </Tooltip>
+            </Form.Group>
+            <Form.Group>
+              <Form.Label htmlFor="reason_rashod">
+                Причина расхождения данных
+              </Form.Label>
+              <Form.Control
+                id="reason_rashod"
+                name="reason_rashod"
+                as="select"
+                value={reason_rashod}
+                onChange={(e) => setReason_rashod(e.target.value)}
+              >
+                <option></option>
+                <option key="1">
+                  Низкая плотность данных реального времени
+                </option>
+                <option key="2">
+                  Проблема с передачей данных реального времени
+                </option>
+                <option key="3">Перерасчет данных из памяти прибора</option>
+              </Form.Control>
+            </Form.Group>
+            <Form.Group>
+              <Form.Label htmlFor="koef_fail">
+                Коэффициент отсутствия данных
+              </Form.Label>
+              <Tooltip
+                title="Значение должно быть в диапазоне от 0 до 100"
+                arrow
+              >
+                <InputGroup>
+                  <Form.Control
+                    id="koef_fail"
+                    name="koef_fail"
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={koef_fail}
+                    onChange={(e) =>
+                      setKoef_fail(
+                        Math.max(
+                          e.target.min,
+                          Math.min(e.target.max, e.target.value),
+                        ),
+                      )
+                    }
+                  />
+                  <InputGroup.Append>
+                    <InputGroup.Text id="basic-addon2">%</InputGroup.Text>
+                  </InputGroup.Append>
+                </InputGroup>
+              </Tooltip>
+            </Form.Group>
+            <Form.Group>
+              <Form.Label htmlFor="petrophysic_task">
+                Петрофизическая задача
+              </Form.Label>
+              <FormControl id="petrophysic_task" name="petrophysic_task">
+                <Select
+                  id="petrophysic_task"
+                  name="petrophysic_task"
+                  multiple
+                  value={petrophysic_selected}
+                  onChange={(e) => setPetrophysic(e)}
+                  input={
+                    <OutlinedInput style={{ width: "915px", height: "38px" }} />
+                  }
+                  renderValue={(selected) => petrophysic_task}
+                  MenuProps={MenuProps}
+                >
+                  {petrophysic_names.map((name) => (
+                    <MenuItem key={name} value={name}>
+                      <Checkbox
+                        checked={petrophysic_selected.indexOf(name) > -1}
+                      />
+                      <ListItemText primary={name} />
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+                  </Form.Group>*/}
+          </Form>
+          <Form style={{display: (showData ? 'block' : 'none')}}>
+            <Form.Group>
+              <Form.Label htmlFor="methodcopy">Метод</Form.Label>
+              <Form.Control
+                id="methodcopy"
+                name="methodcopy"
+                value={method}
+                onChange={(e) => setMethod(e.target.value)}
+                disabled
+              />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label htmlFor="act">
+                Акт промера бурового инструмента с указанием длины свечей и
+                порядка их спуска
+              </Form.Label>
+              <Form.Control
+                id="act"
+                name="act"
+                as="select"
+                value={act}
+                onChange={(e) => setAct(e.target.value)}
+              >
+                <option value=""></option>
+                <option value="Имеется">Имеется</option>
+                <option value="Не имеется">Не имеется</option>
+              </Form.Control>
+            </Form.Group>
+            <Form.Group>
+              <Form.Label htmlFor="linkage">
+                Увязка кривых ГИС по глубине
+              </Form.Label>
+              <Form.Control
+                id="linkage"
+                name="linkage"
+                value={linkage}
+                as="select"
+                onChange={(e) => setLinkage(e.target.value)}
+              >
+                <option></option>
+                <option key="1">Увязан</option>
+                <option key="2">Частично неувязан</option>
+                <option key="3">Неувязан</option>
+              </Form.Control>
+            </Form.Group>
+            <Form.Group>
+              <Form.Label htmlFor="emissions">Выбросы</Form.Label>
+              <Form.Control
+                id="emissions"
+                name="emissions"
+                value={emissions}
+                as="select"
+                onChange={(e) => setEmissions(e.target.value)}
+              >
+                <option></option>
+                <option key="1">Отсутствуют</option>
+                <option key="2">Единичные</option>
+                <option key="3">Регулярные</option>
+              </Form.Control>
+            </Form.Group>
+            <Form.Group>
+              <Form.Label htmlFor="noise">Зашумленность</Form.Label>
+              <Form.Control
+                id="noise"
+                name="noise"
+                value={noise}
+                as="select"
+                onChange={(e) => setNoise(e.target.value)}
+              >
+                <option></option>
+                <option key="1">Отсутствует</option>
+                <option key="2">Незначительная</option>
+                <option key="3">Высокая</option>
+              </Form.Control>
+            </Form.Group>
+            <Form.Group>
+              <Form.Label htmlFor="control">Контрольная запись</Form.Label>
+              <Form.Control
+                id="control"
+                name="control"
+                value={control}
+                as="select"
+                onChange={(e) => setControl(e.target.value)}
+              >
+                <option></option>
+                <option key="1">Соответствует основному замеру</option>
+                <option key="2">Отменена по согласованию сторон</option>
+                <option key="3">Не соответствует основной записи</option>
+                <option key="4">Не произведена</option>
+              </Form.Control>
+            </Form.Group>
+            <Form.Group>
+              <Form.Label htmlFor="distribute_support">
+                Распределение данных ГИС при бурении на гистограммах
+                относительно опорных скважин
+              </Form.Label>
+              <Form.Control
+                id="distribute_support"
+                name="distribute_support"
+                value={distribute_support}
+                as="select"
+                onChange={(e) => setDistribute_support(e.target.value)}
+              >
+                <option></option>
+                <option key="1">Соответствует данным опорных скважин</option>
+                <option key="2">
+                  Не соответствует данным опорных скважин (занижено)
+                </option>
+                <option key="3">
+                  Не соответствует данным опорных скважин (завышено)
+                </option>
+              </Form.Control>
+            </Form.Group>
+            <Form.Group>
+              <Form.Label htmlFor="distribute_palet">
+                Распределение данных ГИС при бурении на кросс-плотах
+                относительно палеток
+              </Form.Label>
+              <Form.Control
+                id="distribute_palet"
+                name="distribute_palet"
+                value={distribute_palet}
+                as="select"
+                onChange={(e) => setDistribute_palet(e.target.value)}
+              >
+                <option></option>
+                <option key="1">Лежат в области ожидаемых значений</option>
+                <option key="2">Не лежат в области ожидаемых значений</option>
+              </Form.Control>
+            </Form.Group>
+            <Form.Group>
+              <Form.Label htmlFor="dash">
+                Показания прибора в исследуемом разрезе
+              </Form.Label>
+              <Form.Control
+                id="dash"
+                name="dash"
+                as="select"
+                value={dash}
+                onChange={(e) => setDash(e.target.value)}
+              >
+                <option></option>
+                <option key="1">Соответствуют</option>
+                <option key="2">Не соответствуют</option>
+              </Form.Control>
+            </Form.Group>
+            <Form.Group>
+              <Form.Label htmlFor="corresponse">
+                Соответствие абсолютных петрофизических значений в реперных
+                горизонтах
+              </Form.Label>
+              <Form.Control
+                id="corresponse"
+                name="corresponse"
+                as="select"
+                value={corresponse}
+                onChange={(e) => setCorresponse(e.target.value)}
+              >
+                <option></option>
+                <option key="1">Соответствуют</option>
+                <option key="2">Занижены</option>
+                <option key="3">Завышены</option>
+                <option key="4">Реперные горизонты не вскрыты</option>
+                <option key="5">
+                  Свойства реперного горизонта отсутствуют
+                </option>
+                <option key="6">Свойства реперного горизонта расходятся</option>
+              </Form.Control>
+            </Form.Group>
+            <Form.Group>
+              <Form.Label htmlFor="correlation">
+                Корреляция с другими методами ГИС при бурении
+              </Form.Label>
+              <Tooltip title="Значение должно быть в диапазоне от 0 до 1" arrow>
+                <Form.Control
+                  id="correlation"
+                  name="correlation"
+                  type="number"
+                  min="0"
+                  max="1"
+                  value={correlation}
+                  onChange={(e) => setCorrelation(e.target.value)}
+                />
+              </Tooltip>
+            </Form.Group>
+            <Form.Group>
+              <Form.Label htmlFor="device_tech_condition">
+                Техническое состояние прибора по кривым и флагам LQC
+              </Form.Label>
+              <Form.Control
+                id="device_tech_condition"
+                name="device_tech_condition"
+                as="select"
+                
+                value={device_tech_condition}
+                onChange={(e) => setDevice_tech_condition(e.target.value)}
+              >
+                <option></option>
+                <option key="1">Хорошее</option>
+                <option key="2">Удовлетворительное</option>
+                <option key="3">Неудовлетворительное</option>
+              </Form.Control>
+            </Form.Group>
+            <Form.Group>
+              <Form.Label htmlFor="notes">Примечание</Form.Label>
+              <Form.Control
+                id="notes"
+                name="notes"
+                type="text"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+              />
+            </Form.Group>
+          </Form>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => {
+              onDelete(index);
+              deleteAllLocalData();
+              setActive();
+            }}
+            style={{ outline: "none" }}
+          >
+            Удалить
+          </Button>
+          <Button
+            onClick={() => {
+              onUpdate({
+                index: index,
+                method: method,
+                tool_type: tool_type,
+                tool_num: tool_num,
+                calibr_date: calibr_date,
+                start_date: start_date,
+                end_date: end_date,
+                interval_shod_start: interval_shod_start,
+                interval_shod_end: interval_shod_end,
+                koef_shod: koef_shod,
+                reason_rashod: reason_rashod,
+                koef_fail: koef_fail,
+                petrophysic_task: petrophysic_task,
+                petrophysic_selected: petrophysic_selected,
+              },
+              {
+                  index: index,
+                  method: method,
+                  act: act,
+                  linkage: linkage,
+                  emissions: emissions,
+                  noise: noise,
+                  control: control, 
+                  distribute_palet: distribute_palet,
+                  distribute_support: distribute_support,
+                  dash: dash,
+                  device_tech_condition: device_tech_condition,
+                  corresponse: corresponse,
+                  correlation: correlation,
+                  notes: notes
+              });
+              deleteAllLocalData();
+              setActive();
+            }}
+            style={{ outline: "none" }}
+          >
+            Сохранить
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
+  );
+}
+
+export default FillDataDialog;

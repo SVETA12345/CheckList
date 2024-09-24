@@ -1,0 +1,292 @@
+import React, {useEffect, useState} from "react";
+import {Form, Button} from 'react-bootstrap';
+import {
+    Grid,
+    LinearProgress,
+    Select,
+    OutlinedInput,
+    MenuItem,
+    Input,
+    //Button,
+    Table, TableHead, TableRow, TableCell, TableBody, TableContainer,
+    Paper,
+    TextField,
+    IconButton,
+    InputAdornment
+} from "@material-ui/core";
+import {
+    AddCircleOutline as PlusIcon,
+  } from "@material-ui/icons";
+
+import PageTitle from "../../components/PageTitle";
+import FirstTableRow from "../../components/TableRow/FirstTableRow";
+import SecondTableRow from "../../components/TableRow/SecondTableRow";
+import FullnessDialog from "../../components/Dialogs/FullnessDialog";
+import LasDialog from "../../components/Dialogs/LasDialog";
+import WitsmlDialog from "../../components/Dialogs/WitsmlDialog";
+import DensityDialog from "../../components/Dialogs/DensityDialog";
+import { mdiChevronDoubleLeft } from "@mdi/js";
+
+var tableRowIndex = 0;
+
+function Checklist() {
+    const [showModalFullness, setShowModalFullness] = useState(false);
+    const [showModalLas, setShowModalLas] = useState(false);
+    const [showModalWitsml, setShowModalWitsml] = useState(false);
+    const [showModalDensity, setShowModalDensity] = useState(false);
+
+    
+
+    const [rows, setRows] = useState([{
+        index: 0,
+        method: "",
+        tool_type: "",
+        tool_num: "",
+        calibr_date: "",
+        start_date: "",
+        end_date: "",
+        interval_shod: "",
+        koef_shod: "",
+        reason_rashod: "",
+        koef_fail: ""
+    }]);
+    const [secondrows, setSecondrows] = useState([{
+        index: 0,
+        method: "",
+        act: "",
+        linkage: "",
+        emissions: "",
+        noise: "",
+        control: "",
+        distribute_support: "",
+        distribute_palet: "",
+        dash: "",
+        corresponse: "",
+        correlation: "",
+        notes: ""
+    }]);
+
+    const handleChange = data => {
+        rows[data.index] = data
+    }
+    const handleChangeSecond = data => {
+        secondrows[data.index] = data
+    }
+
+    const AddRow = () => {
+        tableRowIndex = parseFloat(tableRowIndex) + 1
+        var updatedRows = [...rows]
+        updatedRows[tableRowIndex] = {index: tableRowIndex, method: "1", tool_type: "", tool_num: "",
+        calibr_date: "", start_date: "", end_date: "",
+        interval_shod: "", koef_shod: "", reason_rashod: "",
+        koef_fail: ""}
+        var updatedRowsSecond = [...secondrows]
+        updatedRowsSecond[tableRowIndex] = {index: tableRowIndex, method: "1", act: "",
+            linkage: "", emissions: "", noise: "", control: "", distribute_support: "", distribute_palet: "",
+            dash: "", corresponse: "", correlation: "", notes: ""
+        }
+        setRows(updatedRows)
+        setSecondrows(updatedRowsSecond)
+    }
+
+    const deleteRow = (index) => {
+        if(rows.length > 1){
+           var updatedRows = [...rows]
+           var updatedRowsSecond = [...secondrows]
+           var indexToRemove = updatedRows.findIndex(x => x.index === index);
+           console.log(indexToRemove)
+           tableRowIndex = tableRowIndex - 1; 
+           if(indexToRemove > -1){
+              updatedRows.splice(indexToRemove, 1);
+              updatedRowsSecond.splice(indexToRemove, 1);
+              console.log(updatedRowsSecond)
+              console.log(updatedRows)
+              setRows(updatedRows);
+              setSecondrows(updatedRowsSecond);
+           }
+        }
+     }
+
+    const handleModalFullness = () => {
+        setShowModalFullness(!showModalFullness);
+    }
+    const handleModalLas = () => {
+        setShowModalLas(!showModalLas);
+    }
+    const handleModalWitsml = () => {
+        setShowModalWitsml(!showModalWitsml);
+    }
+    const handleModalDensity = () => {
+        setShowModalDensity(!showModalDensity);
+    }
+
+    useEffect(() => { setRows(rows) }, [rows]);
+
+    return (
+        <>
+            <FullnessDialog active={showModalFullness} setActive={handleModalFullness}/>
+            <LasDialog active={showModalLas} setActive={handleModalLas}/>
+            <WitsmlDialog active={showModalWitsml} setActive={handleModalWitsml}/>
+            <DensityDialog active={showModalDensity} setActive={handleModalDensity}/>
+            <PageTitle title="Качество данных ГИС (Оперативный отчёт)" />
+            <Grid container spacing={4}>
+            <Grid item xs={12}>
+            <TableContainer component={Paper}>
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell align="center" style={{width:"275px"}}>Заказчик</TableCell>
+                            <TableCell align="center" style={{width:"275px"}}>Месторождение</TableCell>
+                            <TableCell align="center" style={{width:"150px"}}>№ куста</TableCell>
+                            <TableCell align="center" style={{width:"150px"}}>№ скважины</TableCell>
+                            <TableCell align="center">Тип скважины</TableCell>
+                            <TableCell align="center">Сервисная геофизическая компания</TableCell>
+                            <TableCell align="center">Участок ствола скважины</TableCell>
+                            <TableCell align="center" style={{width:"200px"}}>Интервал секции, м</TableCell>
+                            <TableCell align="center" style={{width:"150px"}}>Диаметр долота, мм</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        <TableRow>
+                            <TableCell align="center">
+                            <Form.Control id="customer" name="customer" as="select" defaultValue="Choose...">
+                                <option hidden selected disabled></option>
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                            </Form.Control>
+                            </TableCell>
+                            <TableCell align="center">
+                            <Form.Control id="field" name="field" as="select" defaultValue="Choose...">
+                                <option hidden selected disabled></option>
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                            </Form.Control>
+                            </TableCell>
+                            <TableCell align="center"><Form.Control id="num_pad" name="num_pad"/></TableCell>
+                            <TableCell align="center"><Form.Control id="num_well" name="num_well"/></TableCell>
+                            <TableCell align="center">
+                            <Form.Control id="well_type" name="well_type" as="select" defaultValue="Choose...">
+                                <option></option>
+                                <option key="1">Горизонтальная</option>
+                                <option key="2">Вертикальная</option>
+                                <option key="3">Наклонно-направленная</option>
+                                <option key="4">Боковой наклонно-направленный ствол</option>
+                                <option key="5">Боковой горизонтальный ствол</option>
+                                <option key="6">Многозабойная скважина</option>
+                                <option key="7">Многоствольная скважина</option>
+                                <option key="8">Многозабойный боковой горизонтальный ствол</option>
+                            </Form.Control>
+                            </TableCell>
+                            <TableCell align="center">
+                            <Form.Control id="service" name="service" as="select" defaultValue="Choose...">
+                                <option hidden selected disabled></option>
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                            </Form.Control>
+                            </TableCell>
+                            <TableCell align="center">
+                            <Form.Control id="pie_well" name="pie_well" as="select" defaultValue="Choose...">
+                                <option></option>
+                                <option key="0">Горизонтальный</option>
+                                <option key="1">Транспортный</option>
+                                <option key="2">Пилотный</option>
+                            </Form.Control>
+                            </TableCell>
+                            <TableCell align="center">
+                                <Form.Control id="section_interval_start" name="section_interval_start" type="number" step="0.01" style={{display: "inline-block", width: "65px"}}/>
+                                <div style={{display: "inline-block"}}>&ensp;-&ensp;</div>
+                                <Form.Control id="section_interval_end" name="section_interval_end" type="number" step="0.01" style={{display: "inline-block", width: "65px"}}/>
+                            </TableCell>
+                            <TableCell align="center">
+                                <Form.Control id="diametr" name="diametr" type="number"/>
+                            </TableCell>
+                        </TableRow>
+                    </TableBody>
+                </Table>
+                </TableContainer>
+            </Grid>
+            <Grid item xs={12}>
+                <TableContainer component={Paper}>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell></TableCell>
+                                <TableCell align="center" style={{width:"250px"}}>
+                                    <IconButton
+                                        aria-haspopup="true"
+                                        color="innherit"
+                                        onClick={AddRow}
+                                        style={{outline: "none"}}
+                                        >
+                                        <PlusIcon style={{color: "black"}}/>
+                                    </IconButton>Метод
+                                </TableCell>
+                                <TableCell align="center">Тип прибора</TableCell>
+                                <TableCell align="center">Номер прибора</TableCell>
+                                <TableCell align="center">Дата калибровки прибора</TableCell>
+                                <TableCell align="center">Дата начала ГИС при бурении</TableCell>
+                                <TableCell align="center">Дата окончания ГИС при бурении</TableCell>
+                                <TableCell align="center" style={{width: "200px"}}>Интервал записи (факт), м</TableCell>
+                                <TableCell align="center">Коэффициент сходимости данных</TableCell>
+                                <TableCell align="center">Причина расхождения данных</TableCell>
+                                <TableCell align="center">Коэффициент отсутствия данных</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {rows.map((row, index) => { if(row) return (
+                                <FirstTableRow key={index} row={row} handleDataChange={handleChange} deleteRow={deleteRow}></FirstTableRow>
+                            )
+                            })}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </Grid>
+            <Grid item lg={3} md={8} sm={6} xs={4} align="center">
+            <Button variant="info" color="primary" size="large" onClick={handleModalFullness} style={{outline: "none"}}>Полнота предоставления данных на планшете с каротажными диаграммами</Button>
+            </Grid>
+            <Grid item lg={3} md={8} sm={6} xs={4} align="center">
+            <Button variant="info" color="primary" size="large" onClick={handleModalLas}>Оформление Las-файла</Button>
+            </Grid>
+            <Grid item lg={3} md={8} sm={6} xs={4} align="center">
+            <Button variant="info" color="primary" size="large" onClick={handleModalWitsml}>Корректность загрузки данных реального времени (WITSML)</Button>
+            </Grid>
+            <Grid item lg={3} md={8} sm={6} xs={4} align="center">
+            <Button variant="info" color="primary" size="large" onClick={handleModalDensity}>Плотность данных реального времени:  точ. на метр</Button>
+            </Grid>
+            <Grid item xs={12}>
+                <TableContainer component={Paper}>
+                    <Table>
+                        <TableHead>
+                            <TableRow >
+                                <TableCell align="center" style={{width:"250px"}}>Метод</TableCell>
+                                <TableCell align="center" style={{width:"200px"}}>Акт промера бурового инструмента с указанием длины свечей и порядка их спуска</TableCell>
+                                <TableCell align="center">Увязка кривых ГИС по глубине</TableCell>
+                                <TableCell align="center" style={{width:"150px"}}>Выбросы</TableCell>
+                                <TableCell align="center">Зашумленность</TableCell>
+                                <TableCell align="center">Контрольная запись</TableCell>
+                                <TableCell align="center">Распределение данных ГИС при бурении на гистограммах относительно опорных скважин</TableCell>
+                                <TableCell align="center">Распределение данных ГИС при бурении на кросс-плотах относительно палеток</TableCell>
+                                <TableCell align="center">Показания прибора в исследуемом разрезе</TableCell>
+                                <TableCell align="center">Соответствие абсолютных петрофизических значений в реперных горизонтах</TableCell>
+                                <TableCell align="center">Корреляция с другими методами ГИС при бурении</TableCell>
+                                <TableCell align="center">Примечание</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {secondrows.map((row, index) => { if(row) return (
+                                <SecondTableRow key={index} row={row} handleDataChange={handleChangeSecond} deleteRow={deleteRow} method={rows[index].method}></SecondTableRow>
+                            )
+                            })}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </Grid>
+            </Grid>
+        </>
+    )
+}
+
+export default Checklist;

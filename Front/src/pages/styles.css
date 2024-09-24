@@ -1,0 +1,124 @@
+.btn-deepblue {
+    background-color: #34547A;
+    color: white;
+    border-color:#34547A;
+    outline: none;
+}
+
+.btn-deepblue:hover {
+    background-color: #6985AF; 
+    border-color:#6985AF;
+    color: white;
+}
+
+.btn-deepblueadd {
+    background-color: #6985AF;
+    color: white;
+    border-color:#6985AF;
+    outline: none;
+    border-radius: 15px;
+}
+
+.btn-deepblueadd:hover {
+    background-color: #96b0d6;
+    border-color: #96b0d6;
+    color:white;
+}
+
+.btn-yellow {
+    background-color: #FFF453;
+    color: black;
+    border-color: #FFF453;
+    outline: none;
+    border-radius: 15px;
+    font-size: 1.25rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn-yellow:hover {
+    background-color: #F6D106;
+    border-color: #F6D106;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+  }
+
+::-webkit-scrollbar-track {
+    background: inherit; 
+    border-radius: 5px;
+}
+   
+
+::-webkit-scrollbar-thumb {
+    background: #96b0d6; 
+    border-radius: 5px;
+}
+  
+
+::-webkit-scrollbar-thumb:hover {
+    background: #6985AF; 
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+  }
+  input[type="number"]:hover,
+  input[type="number"]:focus {
+    -moz-appearance: number-input;
+  }
+
+  .uploadfile {
+    display: inline-block;
+    background-color: #FFF453;
+    color: black;
+    width: 25%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    font-family: sans-serif;
+    border-radius: 15px;
+    cursor: pointer;
+  }
+
+  .fileButton {
+    background-color:#34547A;
+    color: white;
+    border-radius: 4px;
+    outline: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 225px;
+    text-transform: uppercase;
+    font-size: 1em;
+    box-shadow: 1px 1px 1px gray;
+  }
+
+  .fileButton:hover {
+    color: white;
+    text-decoration: none;
+    background-color: #1a2a3d;
+  }
+
+  .custom-tooltip {
+    background-color: white;
+    padding: 1rem 1rem 0 1rem;
+    border: 1px solid #d5d5d5;
+  }
+
+  .label {
+    font-size: 16px;
+  }
+
+  .label2 {
+    font-size: 18px;
+    font-weight: 700;
+  }
