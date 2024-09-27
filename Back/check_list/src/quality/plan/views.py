@@ -25,8 +25,11 @@ class PlanView(APIView):
     def post(self, request):
         fs = FileSystemStorage()
         if request.FILES.get('plan'):
+            print('yeyeys')
             file = default_storage.save(request.FILES.get('plan').name, request.FILES.get('plan'))
-            path =os.getcwd() +'/check_list/src/files_root/' + file
+            # windows: os.getcwd() +"\\files_root\\" + file
+            # linux: os.getcwd() +'/check_list/src/files_root/' + file
+            path =os.getcwd() +"\\files_root\\" + file
             with open(path, "rb") as f:
                 in_mem_file = io.BytesIO(f.read())
             workbook = openpyxl.load_workbook(path, read_only=True, data_only=True)
@@ -39,14 +42,16 @@ class PlanView(APIView):
                 else:
                     if ( str(sheet['F'+str(i)].value).isnumeric() ):
                         data_obj[int(sheet['B'+str(i)].value)] += int(sheet['F'+str(i)].value)
+                        print(data_obj)
 #                p = PlanStata.objects.get_or_create(year=start_date)
 #                p[0].month = int(sheet['B'+str(i)].value)
 #                p[0].count_report = int(sheet['F'+str(i)].value)
 #                p[0].save()
 #                start_date += 1
+            #C:\Users\s_martyanova\CheckList\Back\check_list\src\check_list\src\files_root
+            #C:\Users\s_martyanova\CheckList\Back\check_list\src\files_root
             workbook.close()
             for key in data_obj.keys():
-                print(key, data_obj[key])
                 p = PlanStata.objects.get_or_create(
                     year=start_date,
                     month=key
