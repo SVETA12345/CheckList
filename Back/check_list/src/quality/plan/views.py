@@ -29,7 +29,7 @@ class PlanView(APIView):
             file = default_storage.save(request.FILES.get('plan').name, request.FILES.get('plan'))
             # windows: os.getcwd() +"\\files_root\\" + file
             # linux: os.getcwd() +'/check_list/src/files_root/' + file
-            path =os.getcwd() +"\\files_root\\" + file
+            path =os.getcwd() +'/check_list/src/files_root/' + file
             with open(path, "rb") as f:
                 in_mem_file = io.BytesIO(f.read())
             workbook = openpyxl.load_workbook(path, read_only=True, data_only=True)
