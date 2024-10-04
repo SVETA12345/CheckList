@@ -5,7 +5,6 @@ WORKDIR /backend
 RUN pip install -r requirements.txt
 EXPOSE 5555
 USER 0
-RUN mkdir -p check_list/src/files_root/logs
-RUN chmod -R user:root check_list/src/files_root/logs
+RUN mkdir -p check_list/src/files_root/logs && chmod -R user:root check_list/src/files_root/logs
 RUN apt update
 run apt install -y libreoffice
