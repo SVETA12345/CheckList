@@ -1,7 +1,7 @@
 FROM python:3.10
 ENV PYTHONUNBUFFERED 1
-ADD . /backend
-WORKDIR /backend
+ADD . /Back
+WORKDIR /Back
 RUN pip install -r requirements.txt
 EXPOSE 5555
 USER 0

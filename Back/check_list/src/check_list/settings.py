@@ -30,7 +30,6 @@ from django.utils import timezone
 # ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-print(os.getcwd())
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
@@ -288,7 +287,7 @@ LOGGING = {
             "when": "midnight",
             "backupCount": 365,
             "delay": True,
-            "filename": 'Back/check_list/src/files_root/' +f"logs/log_file.log{datetime.datetime.now().strftime('%Y-%m-%d')}"
+            "filename": os.getcwd() +'/check_list/src/files_root/' +f"logs/log_file.log{datetime.datetime.now().strftime('%Y-%m-%d')}"
         },
     },
     "loggers": {
