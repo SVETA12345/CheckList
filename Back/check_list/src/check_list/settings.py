@@ -287,7 +287,7 @@ LOGGING = {
             "when": "midnight",
             "backupCount": 365,
             "delay": True,
-            "filename": os.getcwd() +'/files_root/' +f"logs/log_file.log{datetime.datetime.now().strftime('%Y-%m-%d')}"
+            "filename": os.getcwd() +'/check_list/src/files_root/' +f"logs/log_file.log{datetime.datetime.now().strftime('%Y-%m-%d')}"
         },
     },
     "loggers": {
