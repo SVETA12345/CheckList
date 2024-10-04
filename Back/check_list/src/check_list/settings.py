@@ -288,7 +288,7 @@ LOGGING = {
             "when": "midnight",
             "backupCount": 365,
             "delay": True,
-            "filename": os.path.join(MEDIA_ROOT, f"logs/log_file.log")
+            "filename": os.path.join(MEDIA_ROOT, f"logs/log_file.log{datetime.datetime.now().strftime('%Y-%m-%d')}")
         },
     },
     "loggers": {

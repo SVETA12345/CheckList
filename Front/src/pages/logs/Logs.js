@@ -26,7 +26,7 @@ function Logs() {
     const [date_start, setDate_start] = useState("");
     const [date_end, setDate_end] = useState("");
     const constant = false;
-
+    const [isLoading, setIsLoading]= useState(false);
     const [showInputTime, setShowInputTime] = useState(false);
     const [showValid, setShowValid] = useState(false);
 
@@ -35,6 +35,7 @@ function Logs() {
     },[constant])
 
     const getLogs = () => {
+      setIsLoading(true)
         fetch(process.env.REACT_APP_API+'get_week_log/?format=json', { headers : { 
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -44,12 +45,14 @@ function Logs() {
         .then(response=>response.json())
         .then(data=>{
             setLogsData(data);
+            setIsLoading(false)
         })
     }
 
     const getTimeLogs = () => {
         setLogsData([])
-        fetch(process.env.REACT_APP_API + 'get_range_log',{
+        setIsLoading(true)
+        fetch(process.env.REACT_APP_API+ 'get_range_log',{
             method: 'POST',
             headers:{
                 'Accept':'application/json',
@@ -63,6 +66,7 @@ function Logs() {
         })
         .then(response => response.json())
         .then(data=>{
+            setIsLoading(false)
             setLogsData(data)
           })
     }
@@ -118,7 +122,7 @@ function Logs() {
           <MUIDataTable
             title={<Typography variant="h6">
             Список логов в базе
-            {logsData.length === 0 && <CircularProgress size={24} style={{ marginLeft: 15, position: 'relative', top: 4 }} />}
+            {isLoading && <CircularProgress size={24} style={{ marginLeft: 15, position: 'relative', top: 4 }} />}
           </Typography>}
             data={logsData.map(item => [item.user_name, item.user_login, item.request.substring(0, 60), item.level, item.timestamp.substring(0, 10) + " " + item.timestamp.substring(11, 19)])}
             columns={["Имя", "Логин", "Запрос пользователя", "Уровень", "Время запроса"]}

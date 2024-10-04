@@ -13,14 +13,12 @@ def range_amount_days(amount_days, date_end):
     for i in range(amount_days + 1):
         date_file = date_end - timezone.timedelta(days=i)
         try:
-            if date_file == timezone.localtime(timezone.now()).date():
-                date_file_str = ""
-            else:
-                date_file_str = "." + str(date_file)
+            date_file_str = str(date_file)
             log_inform = log_inform + read_line(date_file_str)
         except FileNotFoundError:
-            # print('Не нашёл файл!')
+            print('Не нашёл файл!')
             pass
+
     return log_inform
 
 
@@ -28,7 +26,7 @@ def range_amount_days(amount_days, date_end):
 def read_line(date_file_str=""):
     log_inform_file = []
     # print('file_name=', os.getcwd() + f'/check_list/src/files_root/logs/log_file.log{date_file_str}')
-    for line in open(f'check_list/src/files_root/logs/log_file.log{date_file_str}'):
+    for line in open(f'files_root/logs/log_file.log{date_file_str}'):
         log_request = json.loads(line, strict=False)
         try:
             if log_request["event"] == "request_finished":

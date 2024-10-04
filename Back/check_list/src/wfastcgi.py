@@ -14,6 +14,7 @@
 # See the Apache Version 2.0 License for specific language governing
 # permissions and limitations under the License.
 from __future__ import absolute_import, print_function, with_statement
+print('www')
 
 __author__ = "Microsoft Corporation <ptvshelp@microsoft.com>"
 __version__ = "3.0.0"
@@ -349,7 +350,9 @@ def log(txt):
             pass
     
     log_file = os.environ.get('WSGI_LOG')
+    print('no')
     if log_file:
+        print('yes')
         with open(log_file, 'a+', encoding='utf-8') as f:
             txt = txt.replace('\r\n', '\n')
             f.write('%s: %s%s' % (datetime.datetime.now(), txt, '' if txt.endswith('\n') else '\n'))
