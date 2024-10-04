@@ -1,6 +1,6 @@
 FROM python:3.10
 ENV PYTHONUNBUFFERED 1
-ADD . /Back
+#ADD . /Back
 WORKDIR /Back
 RUN pip install -r requirements.txt
 EXPOSE 5555
