@@ -6,5 +6,7 @@ RUN pip install -r requirements.txt
 EXPOSE 5555
 USER 0
 RUN mkdir -p /check_list/src/files_root/logs/
+RUN cd /check_list/src/files_root/
+RUN ls -la
 RUN apt update
 run apt install -y libreoffice
