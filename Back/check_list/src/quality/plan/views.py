@@ -25,7 +25,6 @@ class PlanView(APIView):
     def post(self, request):
         fs = FileSystemStorage()
         if request.FILES.get('plan'):
-            print('yeyeys')
             file = default_storage.save(request.FILES.get('plan').name, request.FILES.get('plan'))
             # windows: os.getcwd() +"\\files_root\\" + file
             # linux: os.getcwd() +'/check_list/src/files_root/' + file

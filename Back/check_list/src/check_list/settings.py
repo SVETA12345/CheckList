@@ -249,7 +249,6 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'Europe/Moscow'
@@ -289,7 +288,7 @@ LOGGING = {
             "when": "midnight",
             "backupCount": 365,
             "delay": True,
-            "filename": os.getcwd() +'/check_list/src/files_root/' +f"logs/log_file.log{datetime.datetime.now().strftime('%Y-%m-%d')}"
+            "filename": '/Back/check_list/src/files_root/' +f"logs/log_file.log{datetime.datetime.now().strftime('%Y-%m-%d')}"
         },
     },
     "loggers": {
