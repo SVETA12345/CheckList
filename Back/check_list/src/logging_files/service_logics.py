@@ -25,8 +25,8 @@ def range_amount_days(amount_days, date_end):
 # считывание файла логгирования
 def read_line(date_file_str=""):
     log_inform_file = []
-    # print('file_name=', os.getcwd() + f'/check_list/src/files_root/logs/log_file.log{date_file_str}')
-    for line in open(f'files_root/logs/log_file.log{date_file_str}'):
+    print('file_name=', os.getcwd() + f'/check_list/src/files_root/logs/log_file.log{date_file_str}')
+    for line in open(os.getcwd() + f'/check_list/src/files_root/logs/log_file.log{date_file_str}'):
         print(line)
         log_request = json.loads(line, strict=False)
         try:
