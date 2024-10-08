@@ -19,6 +19,7 @@ services:
     restart: always
     volumes:
       - CL_files:/backend/check_list/src/files_root
+      - CL_files:/backend/check_list/src/files_root/logs
     ports:
       - "5555:5555"
       - "5432:5432"
